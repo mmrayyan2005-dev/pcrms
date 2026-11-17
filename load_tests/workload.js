@@ -10,11 +10,16 @@ function rand(a, b) {
   return Math.floor(Math.random() * (b - a + 1)) + a;
 }
 
-// Fractions of PEAK requests/second, one per STEP seconds.
-// Includes one sudden spike (0.2 -> 0.6 -> 1.0) near the end.
-function waveStages() {
-  const shape = [0.2, 0.3, 0.5, 0.8, 1.0, 0.8, 0.5, 0.3, 0.2, 0.2, 0.6, 1.0, 0.4, 0.2];
-  return shape.map((f) => ({
+// Fractions of PEAK requests/second, one value per STEP seconds.
+const SHAPES = {
+  wave:   [0.2, 0.3, 0.5, 0.8, 1.0, 0.8, 0.5, 0.3, 0.2, 0.2, 0.6, 1.0, 0.4, 0.2],
+  spikes: [0.2, 0.2, 1.0, 0.2, 0.2, 0.2, 0.9, 0.3, 0.2, 1.0, 0.2, 0.2, 0.8, 0.2],
+  ramp:   [0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.0, 0.6, 0.2],
+  noisy:  [0.3, 0.6, 0.4, 0.8, 0.5, 1.0, 0.7, 0.9, 0.4, 0.6, 0.3, 0.8, 0.5, 0.2],
+};
+
+function stagesFor(name) {
+  return SHAPES[name].map((f) => ({
     duration: STEP + 's',
     target: Math.max(1, Math.round(PEAK * f)),
   }));
@@ -29,15 +34,17 @@ const scenarios = {
     preAllocatedVUs: 10,
     maxVUs: 50,
   },
-  wave: {
+};
+for (const name of Object.keys(SHAPES)) {
+  scenarios[name] = {
     executor: 'ramping-arrival-rate',
     startRate: 1,
     timeUnit: '1s',
-    stages: waveStages(),
+    stages: stagesFor(name),
     preAllocatedVUs: 20,
     maxVUs: 200,
-  },
-};
+  };
+}
 
 export const options = {
   scenarios: { [PROFILE]: scenarios[PROFILE] },

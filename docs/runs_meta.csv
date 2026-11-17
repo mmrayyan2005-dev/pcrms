@@ -1,0 +1,5 @@
+run,profile,peak,start_wsl,end_wsl,elapsed_wsl_s,elapsed_win_s,elapsed_uptime_s
+wave_a,wave,50,1794935235,1794936125,890,891,902.3
+spikes_a,spikes,60,1794936139,1794937033,894,900,901.2
+ramp_a,ramp,50,1794937054,1794937957,903,903,901.2
+noisy_a,noisy,40,1794937976,1794938878,902,902,901.1
